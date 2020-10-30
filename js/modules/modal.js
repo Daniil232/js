@@ -1,44 +1,47 @@
-function modal() {
-	//modal
+function openModal(modalSelector, modalTimerId) {
+	const modal = document.querySelector(modalSelector);
 
-	const modalTrigger = document.querySelectorAll('[data-modal]'), //атрибут в []
-			modal = document.querySelector('.modal');
+	modal.classList.add('show');
+	modal.classList.remove('hide');
+	document.body.style.overflow = 'hidden';
 
-	modalTrigger.forEach(btn => {
-		btn.addEventListener('click', openModal);
-	});
-
-	function openModal() {
-		modal.classList.add('show');
-		modal.classList.remove('hide');
-		document.body.style.overflow = 'hidden';
+	if (modalTimerId) {
 		clearInterval(modalTimerId);
 	}
+}
 
-	function closeModal () {
-		modal.classList.toggle('show');
-		document.body.style.overflow = '';
-	}
-	
-	
+function closeModal(modalSelector) {
+	const modal = document.querySelector(modalSelector);
 
+	modal.classList.toggle('show');
+	document.body.style.overflow = '';
+}
+
+function modal(trriggerSelector, modalSelector, modalTimerId) {
+	//modal
+
+	const modalTrigger = document.querySelectorAll(trriggerSelector), //атрибут в []
+			modal = document.querySelector(modalSelector);
+
+	modalTrigger.forEach(btn => {
+		btn.addEventListener('click', () => openModal(modalSelector, modalTimerId));
+	});
+	
 	modal.addEventListener('click', (e) => {
 		if (e.target === modal || e.target.getAttribute('data-close') == '') {
-			closeModal();
+			closeModal(modalSelector);
 		}
 	});
 
 	document.addEventListener('keydown', (e) => {
 		if (e.code === "Escape" && modal.classList.contains('show')) {
-			closeModal();
+			closeModal(modalSelector);
 		}
 	});
 
-	const modalTimerId = setTimeout(openModal, 5000000);
-
 	function showModalByScroll() {
 		if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {//клиент видит 
-			openModal();
+			openModal(modalSelector, modalTimerId);
 			window.removeEventListener('scroll', showModalByScroll);
 		}
 	}
@@ -46,4 +49,6 @@ function modal() {
 	window.addEventListener('scroll', showModalByScroll);
 }
 
-module.exports = modal;
+export default modal;
+export {closeModal};
+export {openModal};
